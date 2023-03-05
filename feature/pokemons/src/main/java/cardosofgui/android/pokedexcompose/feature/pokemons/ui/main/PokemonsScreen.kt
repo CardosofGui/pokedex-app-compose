@@ -42,11 +42,12 @@ internal fun PokemonsActivity.PokemonsScreen(
                         pokemon = pokemon,
                         modifier = Modifier.padding(
                             4.dp
-                        )
+                        ),
+                        onClickPokemon = { viewModel.clickedPokemon(it) }
                     )
 
                     DisposableEffect(Unit) {
-                        if (index == state.pokemonList.lastIndex)
+                        if (index == state.pokemonList.lastIndex - 5)
                             viewModel.loadMore()
 
                         onDispose {}

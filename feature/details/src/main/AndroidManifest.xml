@@ -2,4 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cardosofgui.android.pokedexcompose.feature.details">
 
+    <application>
+        <activity
+            android:name=".ui.DetailsMainActivity"
+            android:exported="false"
+            android:label="@string/title_activity_details_main"
+            android:theme="@style/Theme.PokedexCompose" />
+    </application>
+
 </manifest>

@@ -8,6 +8,7 @@ import cardosofgui.android.pokedexcompose.core.data.di.repositoryModules
 import cardosofgui.android.pokedexcompose.core.data.di.useCaseModules
 import cardosofgui.android.pokedexcompose.di.appModules
 import cardosofgui.android.pokedexcompose.di.navigationModules
+import cardosofgui.android.pokedexcompose.feature.details.di.detailsModule
 import cardosofgui.android.pokedexcompose.feature.pokemons.di.pokemonsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.KoinApplication
@@ -21,6 +22,7 @@ class KoinInitializer : Initializer<KoinApplication> {
             networkModules,
             repositoryModules,
             useCaseModules,
+            detailsModule,
             pokemonsModule,
             appModules
         )

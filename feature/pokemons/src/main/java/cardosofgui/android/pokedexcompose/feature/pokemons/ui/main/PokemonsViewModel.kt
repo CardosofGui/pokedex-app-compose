@@ -65,4 +65,12 @@ class PokemonsViewModel(
             getPokemonList()
         }
     }
+
+    fun clickedPokemon(
+        pokemonId: Long
+    ) {
+        viewModelScope.launch {
+            action.value = PokemonsAction.OpenPokemonDetails(pokemonId)
+        }
+    }
 }
