@@ -1,0 +1,47 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'cardosofgui.android.core.components'
+    compileSdk AndroidSDK.compileSDK
+
+    defaultConfig {
+        minSdk AndroidSDK.minSDK
+        targetSdk AndroidSDK.targetSDK
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        compose true
+    }
+    kotlinOptions {
+        jvmTarget = KotlinSettings.jvmTarget
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion PresentationVersions.composeCompiler
+    }
+}
+
+dependencies {
+
+    implementation platform(PresentationLibs.composeBom)
+    implementation(CoreLibs.androidXCoreKtx)
+    implementation(PresentationLibs.composeUi)
+    implementation(PresentationLibs.composeActivity)
+    implementation(PresentationLibs.composeMaterial3)
+
+}

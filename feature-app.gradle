@@ -1,0 +1,52 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id "kotlinx-serialization"
+}
+
+android {
+    compileSdkVersion AndroidSDK.compileSDK
+
+    defaultConfig {
+        minSdkVersion AndroidSDK.minSDK
+        targetSdkVersion AndroidSDK.targetSDK
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = KotlinSettings.jvmTarget
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion PresentationVersions.composeCompiler
+    }
+}
+
+dependencies {
+    implementation project(Features.components)
+    implementation project(Features.domain)
+    implementation project(Features.data)
+    api project(Features.navigation)
+
+    //Injection
+    implementation(CoreLibs.koinCompose)
+
+    //Others Libs
+    implementation(CoreLibs.airbnbDeeplink)
+    kapt CoreLibs.airbnbDeeplinkAnnotation
+}

@@ -1,0 +1,85 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id "kotlinx-serialization"
+}
+
+android {
+    namespace 'cardosofgui.android.pokedexcompose'
+    compileSdk AndroidSDK.compileSDK
+
+    defaultConfig {
+        applicationId "cardosofgui.android.pokedexcompose"
+        minSdk AndroidSDK.minSDK
+        targetSdk AndroidSDK.targetSDK
+        versionCode AppSettings.versionCode
+        versionName AppSettings.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationIdSuffix ".release"
+            debuggable AppSettings.debuggable
+        }
+        debug {
+            applicationIdSuffix ".debug"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = KotlinSettings.jvmTarget
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion PresentationVersions.composeCompiler
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            exclude 'META-INF/kotlinx-io.kotlin_module'
+            exclude 'META-INF/atomicfu.kotlin_module'
+            exclude 'META-INF/kotlinx-coroutines-io.kotlin_module'
+            exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
+        }
+    }
+}
+
+dependencies {
+    implementation project(Features.navigation)
+    implementation project(Features.components)
+    implementation project(Features.data)
+    implementation project(Features.domain)
+
+    implementation(CoreLibs.androidXCoreKtx)
+    implementation(CoreLibs.lifecycleRuntime)
+    implementation(PresentationLibs.composeActivity)
+    implementation platform(PresentationLibs.composeBom)
+    implementation(PresentationLibs.composeUi)
+    implementation(PresentationLibs.composeGraphics)
+    implementation(PresentationLibs.composePreview)
+    implementation(PresentationLibs.composeMaterial3)
+
+    // Ktor
+    implementation(DataLibs.ktorContentNegotiation)
+    implementation(DataLibs.ktorKotlinxSerialization)
+    implementation(DataLibs.ktorLogging)
+    implementation(DataLibs.ktorOkhttp)
+
+    // Startup
+    implementation(CoreLibs.startup)
+
+    // Koin
+    implementation(CoreLibs.koinCompose)
+}
