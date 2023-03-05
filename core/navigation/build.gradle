@@ -32,6 +32,6 @@ android {
 
 dependencies {
 
-    implementation(CoreLibs.airbnbDeeplink)
+    api(CoreLibs.airbnbDeeplink)
 
 }

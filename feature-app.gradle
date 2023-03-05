@@ -1,8 +1,7 @@
-plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id "kotlinx-serialization"
-}
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion AndroidSDK.compileSDK
@@ -27,7 +26,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = KotlinSettings.jvmTarget
+        jvmTarget = '1.8'
     }
     buildFeatures {
         compose true
@@ -42,6 +41,9 @@ dependencies {
     implementation project(Features.domain)
     implementation project(Features.data)
     api project(Features.navigation)
+
+    implementation(PresentationLibs.composeCoil)
+    implementation(CoreLibs.lifecycleRuntimeCompose)
 
     //Injection
     implementation(CoreLibs.koinCompose)

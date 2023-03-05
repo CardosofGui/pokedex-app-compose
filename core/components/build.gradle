@@ -44,4 +44,7 @@ dependencies {
     implementation(PresentationLibs.composeActivity)
     implementation(PresentationLibs.composeMaterial3)
 
+    api(PresentationLibs.lottie)
+    api(PresentationLibs.lottieCompose)
+
 }

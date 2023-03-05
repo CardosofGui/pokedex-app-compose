@@ -20,6 +20,9 @@ object Features {
     const val data = ":core:data"
     const val domain = ":core:domain"
     const val navigation = ":core:navigation"
+
+    const val pokemons = ":feature:pokemons"
+    const val details = ":feature:details"
 }
 
 object ProjectVersions {

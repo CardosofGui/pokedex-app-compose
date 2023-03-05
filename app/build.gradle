@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id "kotlinx-serialization"
+    id 'kotlin-kapt'
 }
 
 android {
@@ -62,6 +63,9 @@ dependencies {
     implementation project(Features.data)
     implementation project(Features.domain)
 
+    implementation project(Features.pokemons)
+    implementation project(Features.details)
+
     implementation(CoreLibs.androidXCoreKtx)
     implementation(CoreLibs.lifecycleRuntime)
     implementation(PresentationLibs.composeActivity)
@@ -82,4 +86,6 @@ dependencies {
 
     // Koin
     implementation(CoreLibs.koinCompose)
+
+    kapt CoreLibs.airbnbDeeplinkAnnotation
 }

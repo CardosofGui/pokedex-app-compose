@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TemplateProject"
+        android:theme="@style/Theme.PokemonProject"
         tools:targetApi="31">
         <provider
             android:name="androidx.startup.InitializationProvider"
@@ -29,10 +29,10 @@
         </provider>
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.TemplateProject">
+            android:theme="@style/Theme.PokemonProject">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

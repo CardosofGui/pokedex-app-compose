@@ -3,6 +3,11 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:1.7.20"
     }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
 plugins {

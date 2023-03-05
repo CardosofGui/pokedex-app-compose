@@ -7,13 +7,27 @@ import kotlinx.serialization.Serializable
 data class PokemonNetwork(
     val id: Long? = null,
     val name: String? = null,
-    val sprites: SpriteNetwork? = null
+    val url: String? = null,
+    val height: Long? = null,
+    val weight: Long? = null,
+    val types: List<TypesNetwork>? = null,
+    val stats: List<StatsNetwork>? = null
 ) {
     fun provideToModel(): Pokemon {
+        val urlSplit = url?.split("/") ?: emptyList()
+        val idByUrlSplit = urlSplit.getOrNull(urlSplit.size-2)?.toLong()
+
         return Pokemon(
-            id = this.id,
+            id = this.id ?: idByUrlSplit,
             name = this.name,
-            sprites = this.sprites?.provideToModel()
+            mainImage = getMainImageUrl(this.id ?: idByUrlSplit ?: 0),
+            secondaryImage = getSecondaryImageUrl(this.id ?: idByUrlSplit ?: 0),
+            height = this.height,
+            weight = this.weight,
+            types = types?.map { it.provideToModel() },
+            stats = stats?.map { it.provideToModel() }
         )
     }
 }
+fun getMainImageUrl(id: Long) = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
+fun getSecondaryImageUrl(id: Long) = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"

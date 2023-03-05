@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cardosofgui.android.pokedexcompose.feature.pokemons">
+
+    <application>
+        <activity
+            android:name=".ui.main.PokemonsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_pokemons"
+            android:theme="@style/Theme.PokedexCompose" />
+    </application>
+
+</manifest>
