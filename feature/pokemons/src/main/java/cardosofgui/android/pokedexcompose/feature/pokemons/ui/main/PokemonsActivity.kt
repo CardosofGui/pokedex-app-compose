@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import cardosofgui.android.core.components.R
 import cardosofgui.android.core.components.ui.theme.PokemonTheme
 import cardosofgui.android.core.navigation.AppDeeplinkNavigation
 import cardosofgui.android.core.navigation.routes.DetailsRoutes

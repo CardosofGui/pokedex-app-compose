@@ -47,7 +47,7 @@ internal fun PokemonsActivity.PokemonsScreen(
                     )
 
                     DisposableEffect(Unit) {
-                        if (index == state.pokemonList.lastIndex - 5)
+                        if (index == state.pokemonList.lastIndex - 10)
                             viewModel.loadMore()
 
                         onDispose {}
