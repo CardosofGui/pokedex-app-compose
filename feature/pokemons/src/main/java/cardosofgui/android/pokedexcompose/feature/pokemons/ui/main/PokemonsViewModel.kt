@@ -1,8 +1,8 @@
 package cardosofgui.android.pokedexcompose.feature.pokemons.ui.main
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cardosofgui.android.core.components.utils.ViewModel
 import cardosofgui.android.pokedexcompose.core.usecase.GetPokemonUseCase
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsAction
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsState
@@ -11,12 +11,7 @@ import kotlinx.coroutines.launch
 
 class PokemonsViewModel(
     private val getPokemonUseCase: GetPokemonUseCase
-): ViewModel() {
-
-    var state = MutableStateFlow(PokemonsState())
-        private set
-    var action = MutableStateFlow<PokemonsAction?>(null)
-        private set
+): ViewModel<PokemonsState, PokemonsAction>(PokemonsState()) {
 
     init {
         getPokemonList()
@@ -70,7 +65,9 @@ class PokemonsViewModel(
         pokemonId: Long
     ) {
         viewModelScope.launch {
-            action.value = PokemonsAction.OpenPokemonDetails(pokemonId)
+            sendAction(
+                PokemonsAction.OpenPokemonDetails(pokemonId)
+            )
         }
     }
 }

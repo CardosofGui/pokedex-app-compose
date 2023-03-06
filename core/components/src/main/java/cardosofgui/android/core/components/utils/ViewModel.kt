@@ -2,7 +2,10 @@ package cardosofgui.android.core.components.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 abstract class ViewModel<State: UIState, Action: UIAction>(
@@ -11,7 +14,8 @@ abstract class ViewModel<State: UIState, Action: UIAction>(
 
     var state = MutableStateFlow<State>(initialState)
 
-    var action = MutableStateFlow<Action?>(null)
+    private val _action = Channel<Action>(Channel.BUFFERED)
+    var action = _action.receiveAsFlow()
 
     fun setState(
         newState: State
@@ -25,7 +29,7 @@ abstract class ViewModel<State: UIState, Action: UIAction>(
         newAction: Action
     ) {
         viewModelScope.launch {
-            action.value = newAction
+            _action.send(newAction)
         }
     }
 
