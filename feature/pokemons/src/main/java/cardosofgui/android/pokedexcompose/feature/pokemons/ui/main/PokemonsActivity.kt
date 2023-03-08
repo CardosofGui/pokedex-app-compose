@@ -46,7 +46,6 @@ class PokemonsActivity : ComponentActivity() {
                                 }
                             )
                         }
-                        else -> {}
                     }
                 }
             }

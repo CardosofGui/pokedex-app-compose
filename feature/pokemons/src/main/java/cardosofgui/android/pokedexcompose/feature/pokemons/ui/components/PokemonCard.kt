@@ -70,7 +70,7 @@ internal fun PokemonCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            var pokemonImage by remember { mutableStateOf(pokemon.mainImage) }
+            var pokemonImage by remember(pokemon) { mutableStateOf(pokemon.mainImage) }
 
             SubcomposeAsyncImage(
                 model = pokemonImage,

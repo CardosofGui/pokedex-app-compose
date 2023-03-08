@@ -7,13 +7,17 @@ import cardosofgui.android.pokedexcompose.core.usecase.GetPokemonUseCase
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsAction
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 class PokemonsViewModel(
     private val getPokemonUseCase: GetPokemonUseCase
 ): ViewModel<PokemonsState, PokemonsAction>(PokemonsState()) {
 
+    var searchPokemon = MutableStateFlow("")
+
     init {
+        collectSearchPokemon()
         getPokemonList()
     }
 
@@ -68,6 +72,39 @@ class PokemonsViewModel(
             sendAction(
                 PokemonsAction.OpenPokemonDetails(pokemonId)
             )
+        }
+    }
+
+    private fun collectSearchPokemon() {
+        viewModelScope.launch {
+            searchPokemon.debounce(2500).collect {
+                val searchValue = searchPokemon.value
+
+                if(searchValue.isNotEmpty())
+                    setState(
+                        state.value.copy(
+                            filterPokemonList = state.value.pokemonList.filter { pokemon ->
+                                pokemon.name.orEmpty().contains(searchValue, true)
+                            },
+                            hasFilterPokemon = true
+                        )
+                    )
+                else
+                    setState(
+                        state.value.copy(
+                            filterPokemonList = emptyList(),
+                            hasFilterPokemon = false
+                        )
+                    )
+            }
+        }
+    }
+
+    fun updateSearchPokemon(
+        pokemonName: String
+    ) {
+        viewModelScope.launch {
+            searchPokemon.value = pokemonName
         }
     }
 }
