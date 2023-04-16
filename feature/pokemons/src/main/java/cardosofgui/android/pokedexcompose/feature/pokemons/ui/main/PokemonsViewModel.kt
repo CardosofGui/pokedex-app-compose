@@ -86,14 +86,16 @@ class PokemonsViewModel(
                             filterPokemonList = state.value.pokemonList.filter { pokemon ->
                                 pokemon.name.orEmpty().contains(searchValue, true)
                             },
-                            hasFilterPokemon = true
+                            hasFilterPokemon = true,
+                            searchLoading = false
                         )
                     )
                 else
                     setState(
                         state.value.copy(
                             filterPokemonList = emptyList(),
-                            hasFilterPokemon = false
+                            hasFilterPokemon = false,
+                            searchLoading = false
                         )
                     )
             }
@@ -104,6 +106,12 @@ class PokemonsViewModel(
         pokemonName: String
     ) {
         viewModelScope.launch {
+            setState(
+                state.value.copy(
+                    searchLoading = true
+                )
+            )
+
             searchPokemon.value = pokemonName
         }
     }

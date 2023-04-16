@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cardosofgui.android.core.components.ui.LottieAnim
@@ -54,7 +56,7 @@ internal fun PokemonsActivity.PokemonsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchPokemon by viewModel.searchPokemon.collectAsStateWithLifecycle()
-    val isSearchLoading = searchPokemon.isNotEmpty()
+    val searchLoading = state.searchLoading
 
     val pokemonList =
         remember(
@@ -70,13 +72,21 @@ internal fun PokemonsActivity.PokemonsScreen(
         RoundedTextField(
             value = searchPokemon,
             onValueChange = { search -> viewModel.updateSearchPokemon(search) },
+            placeholder = {
+                Text(
+                    text = "Pesquisar",
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
         )
 
         AnimatedVisibility(
-            visible = isSearchLoading.not() || state.hasFilterPokemon,
+            visible = searchLoading.not(),
             enter = slideInHorizontally(),
             exit = slideOutHorizontally() + shrinkHorizontally()
         ) {
@@ -109,8 +119,9 @@ internal fun PokemonsActivity.PokemonsScreen(
             )
         }
 
+
         AnimatedVisibility(
-            visible = (isSearchLoading && state.hasFilterPokemon.not()) || (isSearchLoading.not() && state.hasFilterPokemon),
+            visible = searchLoading,
             enter = slideInHorizontally(),
             exit = slideOutHorizontally() + shrinkHorizontally()
         ) {
@@ -146,7 +157,8 @@ private fun RoundedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    strokeColor: Color = MaterialTheme.colorScheme.primary
+    strokeColor: Color = MaterialTheme.colorScheme.primary,
+    placeholder: @Composable (() -> Unit)? = null
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -163,7 +175,8 @@ private fun RoundedTextField(
                 errorIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
-            )
+            ),
+            placeholder = placeholder
         )
 
         AnimatedVisibility(

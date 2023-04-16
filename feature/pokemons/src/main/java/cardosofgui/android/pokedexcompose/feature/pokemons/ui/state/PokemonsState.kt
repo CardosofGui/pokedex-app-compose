@@ -11,5 +11,6 @@ data class PokemonsState(
     val offset: Long = 0,
     val pokemonList: List<Pokemon> = emptyList(),
     val filterPokemonList: List<Pokemon> = emptyList(),
+    val searchLoading: Boolean = false,
     val hasFilterPokemon: Boolean = false
 ): UIState
