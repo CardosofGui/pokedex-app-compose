@@ -8,6 +8,7 @@ val detailsModule = module {
     viewModel { (pokemonId:  Long) ->
         DetailsViewModel(
             getPokemonUseCase = get(),
+            favoritePokemonUseCase = get(),
             pokemonId = pokemonId
         )
     }

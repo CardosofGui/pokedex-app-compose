@@ -2,12 +2,14 @@ package cardosofgui.android.pokedexcompose.core.usecase
 
 import cardosofgui.android.pokedexcompose.core.network.model.Pokemon
 import cardosofgui.android.pokedexcompose.core.network.service.PokemonApiClient
+import cardosofgui.android.pokedexcompose.core.repository.PokemonRepository
+
 class GetPokemonUseCase(
-    private val pokemonApiClient: PokemonApiClient,
+    private val pokemonRepository: PokemonRepository,
 ) {
     suspend fun getPokemonById(id: Long): Pokemon? {
         return try {
-            pokemonApiClient.getPokemon(pokemonId = id)
+            pokemonRepository.getPokemonById(id = id)
         } catch(e : Exception) {
             null
         }
@@ -17,7 +19,7 @@ class GetPokemonUseCase(
         limit: Long,
         offset: Long
     ): List<Pokemon>? {
-        return pokemonApiClient.getPokemonList(offset = offset, limit = limit)
+        return pokemonRepository.getPokemonList(offset = offset, limit = limit)
     }
 
 }

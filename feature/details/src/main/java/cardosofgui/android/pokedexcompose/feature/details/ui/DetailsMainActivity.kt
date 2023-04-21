@@ -3,11 +3,13 @@ package cardosofgui.android.pokedexcompose.feature.details.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import cardosofgui.android.core.components.R
 import cardosofgui.android.core.components.ui.theme.PokemonTheme
 import cardosofgui.android.core.navigation.routes.DetailsRoutes.Companion.POKEMON_ID_PARAM
+import cardosofgui.android.pokedexcompose.feature.details.ui.state.DetailsAction
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -34,6 +36,14 @@ class DetailsMainActivity : ComponentActivity() {
         }
 
         overridePendingTransition(R.anim.slide_out_top, R.anim.slide_in_top)
+    }
+
+    fun handleActions(action: DetailsAction) {
+        when(action) {
+            is DetailsAction.ShowToast -> {
+                Toast.makeText(this, action.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     companion object {

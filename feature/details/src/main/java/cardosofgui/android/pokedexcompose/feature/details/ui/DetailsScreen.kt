@@ -1,8 +1,7 @@
 package cardosofgui.android.pokedexcompose.feature.details.ui
 
-import android.util.Log
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -15,13 +14,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,15 +32,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,11 +51,10 @@ import cardosofgui.android.core.components.ui.BackButton
 import cardosofgui.android.core.components.ui.BottomSheetShip
 import cardosofgui.android.core.components.ui.LottieAnim
 import cardosofgui.android.core.components.utils.Extensions.Companion.getBackgroundColor
-import cardosofgui.android.pokedexcompose.core.network.model.Stat
 import cardosofgui.android.pokedexcompose.core.network.model.Stats
 import cardosofgui.android.pokedexcompose.core.network.model.Types
 import coil.compose.SubcomposeAsyncImage
-import java.util.*
+import java.util.Locale
 
 @OptIn(ExperimentalLifecycleComposeApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -67,7 +67,7 @@ internal fun DetailsMainActivity.DetailsScreen(
 
     val pokemonId = pokemonDetails?.id
     val name = pokemonDetails?.name
-    val pokemonName = name
+    val favoriteStatus = pokemonDetails?.favoriteStatus ?: false
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -101,65 +101,112 @@ internal fun DetailsMainActivity.DetailsScreen(
                 .fillMaxWidth()
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(topEnd = 24.dp, topStart = 24.dp))
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(bottom = 12.dp)
-        ) {
-            BottomSheetShip(
-                modifier = Modifier
-                    .align(CenterHorizontally)
-                    .padding(vertical = 6.dp)
-            )
-
-            Text(
-                text = (pokemonName ?: "Carregando...").capitalize(Locale.ROOT),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-                fontSize = 18.sp,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Text(
-                text = if(pokemonId != null) "#${pokemonDetails.id.toString().padStart(3, '0')}" else "Carregando...",
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground.copy(.6f),
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Row(
+        Box {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 6.dp),
-                horizontalArrangement = Arrangement.Center
+                    .clip(RoundedCornerShape(topEnd = 24.dp, topStart = 24.dp))
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(bottom = 12.dp)
             ) {
-                pokemonDetails?.types?.forEach { type ->
-                    TypeShip(
-                        type = type,
-                        modifier = Modifier
-                            .padding(horizontal = 6.dp)
-                    )
-                }
-            }
+                BottomSheetShip(
+                    modifier = Modifier
+                        .align(CenterHorizontally)
+                        .padding(vertical = 6.dp)
+                )
 
-            AnimatedVisibility(
-                visible = !state.isLoading,
-            ) {
-                Column {
-                    pokemonDetails?.stats?.forEach { stat ->
-                        StatLineWithLabel(
-                            stat = stat,
-                            modifier = Modifier.padding(horizontal = 12.dp)
+                Text(
+                    text = (name ?: "Carregando...").capitalize(Locale.ROOT),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    text = if(pokemonId != null) "#${pokemonDetails.id.toString().padStart(3, '0')}" else "Carregando...",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground.copy(.6f),
+                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    pokemonDetails?.types?.forEach { type ->
+                        TypeShip(
+                            type = type,
+                            modifier = Modifier
+                                .padding(horizontal = 6.dp)
                         )
                     }
                 }
+
+                AnimatedVisibility(
+                    visible = !state.isLoading,
+                ) {
+                    Column {
+                        pokemonDetails?.stats?.forEach { stat ->
+                            StatLineWithLabel(
+                                stat = stat,
+                                modifier = Modifier.padding(horizontal = 12.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Crossfade(
+                targetState = favoriteStatus,
+                modifier = Modifier
+                    .align(TopEnd)
+            ) {
+                when(it) {
+                    true -> FavoriteIcon(
+                        favoriteStatus = true,
+                        onClickFavorite = { viewModel.favoritePokemon() },
+                        modifier = Modifier
+                            .padding(top = 24.dp, end = 12.dp)
+                            .size(32.dp)
+                    )
+                    false -> FavoriteIcon(
+                        favoriteStatus = false,
+                        onClickFavorite = { viewModel.favoritePokemon() },
+                        modifier = Modifier
+                            .padding(top = 24.dp, end = 12.dp)
+                            .size(32.dp)
+                    )
+                }
             }
         }
+    }
+    
+    LaunchedEffect(Unit) {
+        viewModel.action.collect(::handleActions)
+    }
+}
+
+@Composable
+private fun FavoriteIcon(
+    favoriteStatus: Boolean,
+    onClickFavorite: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClickFavorite,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if(favoriteStatus) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+            contentDescription = "Favorite Icon",
+            tint = Color.Red
+        )
     }
 }
 

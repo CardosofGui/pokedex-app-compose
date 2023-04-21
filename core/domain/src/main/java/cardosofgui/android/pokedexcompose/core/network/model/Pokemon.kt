@@ -8,5 +8,6 @@ data class Pokemon(
     val height: Long? = null,
     val weight: Long? = null,
     val types: List<Types>? = null,
-    val stats: List<Stats>? = null
+    val stats: List<Stats>? = null,
+    val favoriteStatus: Boolean = false
 )
