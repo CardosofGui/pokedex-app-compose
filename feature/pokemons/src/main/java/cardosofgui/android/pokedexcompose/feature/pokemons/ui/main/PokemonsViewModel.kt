@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import cardosofgui.android.core.components.utils.ViewModel
 import cardosofgui.android.pokedexcompose.core.usecase.GetPokemonUseCase
+import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonNavigation
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsAction
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,18 +80,31 @@ class PokemonsViewModel(
         viewModelScope.launch {
             searchPokemon.debounce(2500).collect {
                 val searchValue = searchPokemon.value
+                val navigation = state.value.navigation
 
-                if(searchValue.isNotEmpty())
-                    setState(
-                        state.value.copy(
-                            filterPokemonList = state.value.pokemonList.filter { pokemon ->
-                                pokemon.name.orEmpty().contains(searchValue, true)
-                            },
-                            hasFilterPokemon = true,
-                            searchLoading = false
+                if(searchValue.isNotEmpty()) {
+                    if(navigation is PokemonNavigation.AllPokemonList) {
+                        setState(
+                            state.value.copy(
+                                filterPokemonList = state.value.pokemonList.filter { pokemon ->
+                                    pokemon.name.orEmpty().contains(searchValue, true)
+                                },
+                                hasFilterPokemon = true,
+                                searchLoading = false
+                            )
                         )
-                    )
-                else
+                    } else if(navigation is PokemonNavigation.FavoritesPokemonList) {
+                        setState(
+                            state.value.copy(
+                                filterFavoritePokemonList = state.value.favoritePokemonList.filter { pokemon ->
+                                    pokemon.name.orEmpty().contains(searchValue, true)
+                                },
+                                hasFilterPokemon = true,
+                                searchLoading = false
+                            )
+                        )
+                    }
+                } else {
                     setState(
                         state.value.copy(
                             filterPokemonList = emptyList(),
@@ -98,6 +112,7 @@ class PokemonsViewModel(
                             searchLoading = false
                         )
                     )
+                }
             }
         }
     }
@@ -113,6 +128,34 @@ class PokemonsViewModel(
             )
 
             searchPokemon.value = pokemonName
+        }
+    }
+
+    fun updateNavigation(
+        navigation: PokemonNavigation
+    ) {
+        viewModelScope.launch {
+            setState(
+                state.value.copy(
+                    navigation = navigation,
+                    hasFilterPokemon = false,
+                    searchLoading = false
+                )
+            )
+
+            searchPokemon.value = ""
+        }
+    }
+
+    fun fetchFavoritePokemonList() {
+        viewModelScope.launch {
+            val favoritePokemonList = getPokemonUseCase.getFavoritePokemonList() ?: emptyList()
+
+            setState(
+                state.value.copy(
+                    favoritePokemonList = favoritePokemonList
+                )
+            )
         }
     }
 }

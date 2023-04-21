@@ -12,7 +12,7 @@ class PokemonRepositoryImpl(
         var pokemon = pokemonApiClient.getPokemon(pokemonId = id)
 
         pokemon = pokemon.copy(
-            favoriteStatus = UserData.isFavoritePokemon(pokemon.id)
+            favoriteStatus = UserData.isFavoritePokemon(pokemon)
         )
 
         return pokemon
@@ -20,10 +20,15 @@ class PokemonRepositoryImpl(
     override suspend fun getPokemonList(limit: Long, offset: Long): List<Pokemon>? {
         return pokemonApiClient.getPokemonList(limit = limit, offset = offset)
     }
-    override fun addFavoritePokemon(pokemonId: Long?): Boolean {
-        return UserData.addFavoritePokemon(pokemonId)
+
+    override fun getFavoritePokemonList(): List<Pokemon> {
+        return UserData.getFavoritePokemonList()
     }
-    override fun removeFavoritePokemon(pokemonId: Long?): Boolean {
-        return UserData.removeFavoritePokemon(pokemonId)
+
+    override fun addFavoritePokemon(pokemon: Pokemon?): Boolean {
+        return UserData.addFavoritePokemon(pokemon)
+    }
+    override fun removeFavoritePokemon(pokemon: Pokemon?): Boolean {
+        return UserData.removeFavoritePokemon(pokemon)
     }
 }

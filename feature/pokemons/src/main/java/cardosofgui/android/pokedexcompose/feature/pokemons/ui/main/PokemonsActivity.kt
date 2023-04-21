@@ -52,6 +52,11 @@ class PokemonsActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchFavoritePokemonList()
+    }
+
     companion object {
         fun getStartIntent(
             context: Context

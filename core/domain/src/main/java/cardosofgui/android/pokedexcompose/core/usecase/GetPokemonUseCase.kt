@@ -22,4 +22,7 @@ class GetPokemonUseCase(
         return pokemonRepository.getPokemonList(offset = offset, limit = limit)
     }
 
+    fun getFavoritePokemonList(): List<Pokemon>? {
+        return pokemonRepository.getFavoritePokemonList()
+    }
 }

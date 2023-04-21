@@ -32,10 +32,7 @@ abstract class ViewModel<State: UIState, Action: UIAction>(
             _action.send(newAction)
         }
     }
-
 }
 
-interface UIState {
-
-}
+interface UIState
 interface UIAction

@@ -2,10 +2,12 @@ package cardosofgui.android.pokedexcompose.feature.pokemons.ui.main
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,11 +25,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -38,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +53,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cardosofgui.android.core.components.ui.LottieAnim
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.components.PokemonCard
 import cardosofgui.android.pokedexcompose.feature.pokemons.R
+import cardosofgui.android.pokedexcompose.feature.pokemons.ui.all.AllPokemonsList
+import cardosofgui.android.pokedexcompose.feature.pokemons.ui.favorites.FavoritesPokemonList
+import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonNavigation
+import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.getIcon
+import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.getLabel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -56,17 +67,13 @@ internal fun PokemonsActivity.PokemonsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchPokemon by viewModel.searchPokemon.collectAsStateWithLifecycle()
-    val searchLoading = state.searchLoading
 
-    val pokemonList =
-        remember(
-            state.hasFilterPokemon,
-            state.pokemonList,
-            state.filterPokemonList
-        ) {
-            if(state.hasFilterPokemon) state.filterPokemonList
-            else state.pokemonList
-        }
+    val navigation = state.navigation
+
+    val navigationItems = listOf(
+        PokemonNavigation.AllPokemonList,
+        PokemonNavigation.FavoritesPokemonList
+    )
 
     Column(modifier) {
         RoundedTextField(
@@ -85,66 +92,33 @@ internal fun PokemonsActivity.PokemonsScreen(
                 .padding(8.dp)
         )
 
-        AnimatedVisibility(
-            visible = searchLoading.not(),
-            enter = slideInHorizontally(),
-            exit = slideOutHorizontally() + shrinkHorizontally()
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(128.dp),
-                contentPadding = PaddingValues(
-                    top = 8.dp,
-                    start = 8.dp,
-                    end = 8.dp,
-                    bottom = 8.dp
-                ),
-                content = {
-                    itemsIndexed(pokemonList) { index, pokemon ->
-                        PokemonCard(
-                            pokemon = pokemon,
-                            modifier = Modifier.padding(
-                                4.dp
-                            ),
-                            onClickPokemon = { viewModel.clickedPokemon(it) }
-                        )
-
-                        DisposableEffect(Unit) {
-                            if (index == pokemonList.lastIndex - 10 && !state.hasFilterPokemon)
-                                viewModel.loadMore()
-
-                            onDispose {}
-                        }
-                    }
+        Crossfade(
+            targetState = navigation,
+            modifier = Modifier
+                .weight(1f)
+        ) { nav ->
+            when(nav) {
+                is PokemonNavigation.AllPokemonList -> {
+                    AllPokemonsList()
                 }
-            )
+                is PokemonNavigation.FavoritesPokemonList -> {
+                    FavoritesPokemonList()
+                }
+            }
         }
 
-
-        AnimatedVisibility(
-            visible = searchLoading,
-            enter = slideInHorizontally(),
-            exit = slideOutHorizontally() + shrinkHorizontally()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                LottieAnim(
-                    R.raw.loading_pokeball,
-                    modifier = Modifier
-                        .size(200.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
-
-                Text(
-                    text = "Buscando...",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(8.dp)
+            navigationItems.forEach { item ->
+                NavigationItem(
+                    onClick = { viewModel.updateNavigation(item) },
+                    icon = item.getIcon(),
+                    label = item.getLabel(),
+                    selected = item == navigation,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -197,5 +171,32 @@ private fun RoundedTextField(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun NavigationItem(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    label: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .padding(8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = MaterialTheme.colorScheme.onBackground
+        )
+
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }

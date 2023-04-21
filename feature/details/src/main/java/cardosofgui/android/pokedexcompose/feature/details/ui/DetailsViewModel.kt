@@ -53,9 +53,9 @@ class DetailsViewModel(
                 val pokemonName = currentPokemon.name?.capitalize(Locale.ROOT)
 
                 val favoriteStatus = if(currentPokemon.favoriteStatus) {
-                    favoritePokemonUseCase.removeFavoritePokemon(currentPokemon.id)
+                    favoritePokemonUseCase.removeFavoritePokemon(currentPokemon)
                 } else {
-                    favoritePokemonUseCase.addFavoritePokemon(currentPokemon.id)
+                    favoritePokemonUseCase.addFavoritePokemon(currentPokemon)
                 }
 
                 setState(
