@@ -8,6 +8,7 @@ import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonNavig
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsAction
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ class PokemonsViewModel(
 
     init {
         collectSearchPokemon()
+        collectFavoritePokemonList()
         getPokemonList()
     }
 
@@ -32,38 +34,21 @@ class PokemonsViewModel(
             try {
                 val stateValues = state.value
 
-                val pokemonList = getPokemonUseCase.getPokemonList(
+                getPokemonUseCase.getPokemonList(
                     limit = stateValues.limit,
                     offset = stateValues.offset * stateValues.limit
-                ).first() // TODO MELHORAR ISSO AQUI
-
-                state.value = state.value.copy(
-                    pokemonList = (stateValues.pokemonList + pokemonList).distinct()
-                )
-
-                Log.e("PokemonsViewModel", "Cheguei aqui! Deu bom $pokemonList")
-
+                ).collect {
+                    state.value = state.value.copy(
+                        pokemonList = it
+                    )
+                }
             } catch (e: Exception) {
                 Log.e("PokemonsViewModel", e.message.orEmpty())
-
-                // TODO ADICIONAR TRATATIVA DE ERRO
             } finally {
                 state.value = state.value.copy(
                     isLoading = false
                 )
             }
-        }
-    }
-
-    fun loadMore() {
-        viewModelScope.launch {
-            val stateValues = state.value
-
-            state.value = state.value.copy(
-                offset = stateValues.offset+1,
-            )
-
-            getPokemonList()
         }
     }
 
@@ -88,7 +73,8 @@ class PokemonsViewModel(
                         setState(
                             state.value.copy(
                                 filterPokemonList = state.value.pokemonList.filter { pokemon ->
-                                    pokemon.name.orEmpty().contains(searchValue, true)
+                                    pokemon.name.orEmpty().contains(searchValue, true) ||
+                                    pokemon.id.toString().contains(searchValue, true)
                                 },
                                 hasFilterPokemon = true,
                                 searchLoading = false
@@ -98,7 +84,8 @@ class PokemonsViewModel(
                         setState(
                             state.value.copy(
                                 filterFavoritePokemonList = state.value.favoritePokemonList.filter { pokemon ->
-                                    pokemon.name.orEmpty().contains(searchValue, true)
+                                    pokemon.name.orEmpty().contains(searchValue, true) ||
+                                    pokemon.id.toString().contains(searchValue, true)
                                 },
                                 hasFilterPokemon = true,
                                 searchLoading = false
@@ -148,15 +135,15 @@ class PokemonsViewModel(
         }
     }
 
-    fun fetchFavoritePokemonList() {
+    fun collectFavoritePokemonList() {
         viewModelScope.launch {
-            val favoritePokemonList = getPokemonUseCase.getFavoritePokemonList().first().orEmpty()
-
-            setState(
-                state.value.copy(
-                    favoritePokemonList = favoritePokemonList
+            getPokemonUseCase.getFavoritePokemonList().collect { favoritePokemonList ->
+                setState(
+                    state.value.copy(
+                        favoritePokemonList = favoritePokemonList
+                    )
                 )
-            )
+            }
         }
     }
 }

@@ -35,17 +35,19 @@ class PokemonRepositoryImpl(
             )
         }
     }
-    override suspend fun getPokemonList(limit: Long, offset: Long): Flow<List<Pokemon>> {
-        val pokemonList = pokemonApiClient.getPokemonList(limit = limit, offset = offset)
-
-        pokemonList?.forEach {
-            pokemonDao.insert(PokemonEntity().domainToEntity(it))
-        }
-
+    override suspend fun getPokemonList(): Flow<List<Pokemon>> {
         return pokemonDao.queryAll().map { pokemonEntityList ->
             pokemonEntityList.map { pokemonEntity ->
                 pokemonEntity.toDomain()
             }
+        }
+    }
+
+    override suspend fun getPokemonListFromNetwork(limit: Long, offset: Long) {
+        val pokemonList = pokemonApiClient.getPokemonList(limit = limit, offset = offset)
+
+        pokemonList?.forEach {
+            pokemonDao.insert(PokemonEntity().domainToEntity(it))
         }
     }
 

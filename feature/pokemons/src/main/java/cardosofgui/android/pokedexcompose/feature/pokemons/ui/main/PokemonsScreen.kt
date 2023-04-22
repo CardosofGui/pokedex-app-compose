@@ -191,7 +191,8 @@ private fun NavigationItem(
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = MaterialTheme.colorScheme.onBackground
+            tint = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.size(24.dp)
         )
 
         Text(
