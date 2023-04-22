@@ -6,13 +6,11 @@ import cardosofgui.android.pokedexcompose.core.repository.PokemonRepository
 class FavoritePokemonUseCase(
     private val pokemonRepository: PokemonRepository
 ) {
-    fun removeFavoritePokemon(pokemon: Pokemon?): Boolean {
-        if(pokemon == null) return false
-        return pokemonRepository.removeFavoritePokemon(pokemon)
+    suspend fun removeFavoritePokemon(pokemon: Pokemon?) {
+        pokemonRepository.removeFavoritePokemon(pokemon)
     }
 
-    fun addFavoritePokemon(pokemon: Pokemon?): Boolean {
-        if(pokemon == null) return false
-        return pokemonRepository.addFavoritePokemon(pokemon)
+    suspend fun addFavoritePokemon(pokemon: Pokemon?) {
+        pokemonRepository.addFavoritePokemon(pokemon)
     }
 }

@@ -2,7 +2,6 @@ package cardosofgui.android.pokedexcompose.core.data.network.model
 
 import cardosofgui.android.pokedexcompose.core.network.model.Pokemon
 import kotlinx.serialization.Serializable
-
 @Serializable
 data class PokemonNetwork(
     val id: Long? = null,

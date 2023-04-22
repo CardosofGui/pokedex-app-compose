@@ -31,6 +31,8 @@ android {
     }
 }
 
+apply plugin: 'kotlin-kapt'
+
 dependencies {
     implementation project(Features.domain)
 
@@ -40,4 +42,9 @@ dependencies {
     implementation(DataLibs.ktorOkhttp)
 
     implementation(CoreLibs.koinCompose)
+
+    //Room
+    kapt(DataLibs.roomRuntime)
+    kapt(DataLibs.roomCompiler)
+    implementation(DataLibs.roomKtx)
 }

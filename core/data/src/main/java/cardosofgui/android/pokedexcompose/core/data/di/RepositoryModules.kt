@@ -7,7 +7,10 @@ import org.koin.dsl.module
 val repositoryModules = module {
     single {
         PokemonRepositoryImpl(
-            pokemonApiClient = get()
+            pokemonApiClient = get(),
+            pokemonDao = get(),
+            statsDao = get(),
+            favoriteDao = get()
         ) as PokemonRepository
     }
 }

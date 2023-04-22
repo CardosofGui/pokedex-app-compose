@@ -9,6 +9,7 @@ import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsActi
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class PokemonsViewModel(
@@ -34,7 +35,7 @@ class PokemonsViewModel(
                 val pokemonList = getPokemonUseCase.getPokemonList(
                     limit = stateValues.limit,
                     offset = stateValues.offset * stateValues.limit
-                ) ?: emptyList()
+                ).first() // TODO MELHORAR ISSO AQUI
 
                 state.value = state.value.copy(
                     pokemonList = (stateValues.pokemonList + pokemonList).distinct()
@@ -149,7 +150,7 @@ class PokemonsViewModel(
 
     fun fetchFavoritePokemonList() {
         viewModelScope.launch {
-            val favoritePokemonList = getPokemonUseCase.getFavoritePokemonList() ?: emptyList()
+            val favoritePokemonList = getPokemonUseCase.getFavoritePokemonList().first().orEmpty()
 
             setState(
                 state.value.copy(

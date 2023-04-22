@@ -170,14 +170,14 @@ internal fun DetailsMainActivity.DetailsScreen(
                 when(it) {
                     true -> FavoriteIcon(
                         favoriteStatus = true,
-                        onClickFavorite = { viewModel.favoritePokemon() },
+                        onClickFavorite = { viewModel.favoritePokemon(false) },
                         modifier = Modifier
                             .padding(top = 24.dp, end = 12.dp)
                             .size(32.dp)
                     )
                     false -> FavoriteIcon(
                         favoriteStatus = false,
-                        onClickFavorite = { viewModel.favoritePokemon() },
+                        onClickFavorite = { viewModel.favoritePokemon(true) },
                         modifier = Modifier
                             .padding(top = 24.dp, end = 12.dp)
                             .size(32.dp)

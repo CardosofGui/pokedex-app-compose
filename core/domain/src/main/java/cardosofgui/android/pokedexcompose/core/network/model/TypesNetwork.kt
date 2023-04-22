@@ -5,6 +5,7 @@ data class Types(
 )
 
 data class Type(
+    val id: Long? = null,
     val name: PokemonTypes?
 )
 enum class PokemonTypes {

@@ -6,6 +6,7 @@ import cardosofgui.android.pokedexcompose.core.usecase.FavoritePokemonUseCase
 import cardosofgui.android.pokedexcompose.core.usecase.GetPokemonUseCase
 import cardosofgui.android.pokedexcompose.feature.details.ui.state.DetailsAction
 import cardosofgui.android.pokedexcompose.feature.details.ui.state.DetailsState
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -31,7 +32,7 @@ class DetailsViewModel(
 
                 setState(
                     state.value.copy(
-                        pokemonDetails = response
+                        pokemonDetails = response.first()
                     )
                 )
             } catch (e: Exception) {
@@ -46,29 +47,29 @@ class DetailsViewModel(
         }
     }
 
-    fun favoritePokemon() {
+    fun favoritePokemon(favorite: Boolean) {
         viewModelScope.launch {
             try {
                 val currentPokemon = state.value.pokemonDetails ?: return@launch
                 val pokemonName = currentPokemon.name?.capitalize(Locale.ROOT)
 
-                val favoriteStatus = if(currentPokemon.favoriteStatus) {
-                    favoritePokemonUseCase.removeFavoritePokemon(currentPokemon)
-                } else {
+                if(favorite) {
                     favoritePokemonUseCase.addFavoritePokemon(currentPokemon)
+                } else {
+                    favoritePokemonUseCase.removeFavoritePokemon(currentPokemon)
                 }
 
                 setState(
                     state.value.copy(
                         pokemonDetails = currentPokemon.copy(
-                            favoriteStatus = favoriteStatus
+                            favoriteStatus = favorite
                         )
                     )
                 )
 
                 sendAction(
                     DetailsAction.ShowToast(
-                        if(favoriteStatus) "$pokemonName adicionado aos favoritos" else "$pokemonName removido dos favoritos"
+                        if(favorite) "$pokemonName adicionado aos favoritos" else "$pokemonName removido dos favoritos"
                     )
                 )
             } catch (e: Exception) {

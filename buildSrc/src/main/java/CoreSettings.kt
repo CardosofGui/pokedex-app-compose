@@ -6,6 +6,7 @@ object CoreVersions {
     const val androidXCore = "1.9.0"
     const val airbnbDeeplink = "6.1.0"
     const val logcat = "0.1"
+    const val coroutines = "1.6.4"
 }
 
 object CoreLibs {
@@ -20,4 +21,6 @@ object CoreLibs {
     const val airbnbDeeplinkAnnotation = "com.airbnb:deeplinkdispatch-processor:${CoreVersions.airbnbDeeplink}"
 
     const val logcat = "com.squareup.logcat:logcat:${CoreVersions.logcat}"
+
+    const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${CoreVersions.coroutines}"
 }

@@ -1,34 +1,71 @@
 package cardosofgui.android.pokedexcompose.core.data.repository
 
+import cardosofgui.android.pokedexcompose.core.data.database.dao.FavoriteDao
+import cardosofgui.android.pokedexcompose.core.data.database.dao.PokemonDao
+import cardosofgui.android.pokedexcompose.core.data.database.dao.StatsDao
+import cardosofgui.android.pokedexcompose.core.data.database.entity.FavoriteEntity
+import cardosofgui.android.pokedexcompose.core.data.database.entity.PokemonEntity
+import cardosofgui.android.pokedexcompose.core.data.database.entity.StatsEntity
 import cardosofgui.android.pokedexcompose.core.network.model.Pokemon
 import cardosofgui.android.pokedexcompose.core.network.service.PokemonApiClient
 import cardosofgui.android.pokedexcompose.core.repository.PokemonRepository
-import okhttp3.internal.wait
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class PokemonRepositoryImpl(
-    private val pokemonApiClient: PokemonApiClient
+    private val pokemonApiClient: PokemonApiClient,
+    private val pokemonDao: PokemonDao,
+    private val statsDao: StatsDao,
+    private val favoriteDao: FavoriteDao
 ): PokemonRepository {
-    override suspend fun getPokemonById(id: Long): Pokemon {
-        var pokemon = pokemonApiClient.getPokemon(pokemonId = id)
+    override suspend fun getPokemonById(id: Long): Flow<Pokemon?> {
+        val pokemon = pokemonApiClient.getPokemon(pokemonId = id)
 
-        pokemon = pokemon.copy(
-            favoriteStatus = UserData.isFavoritePokemon(pokemon)
+        val idResult = pokemonDao.insert(PokemonEntity().domainToEntity(pokemon))
+
+        pokemon.stats?.forEach {
+            statsDao.insert(StatsEntity().domainToEntity(it, idResult))
+        }
+
+        val favoriteStatus = favoriteDao.queryFavorite(idResult) != null
+
+        return pokemonDao.queryById(idResult).map {
+            it?.toDomain()?.copy(
+                favoriteStatus = favoriteStatus
+            )
+        }
+    }
+    override suspend fun getPokemonList(limit: Long, offset: Long): Flow<List<Pokemon>> {
+        val pokemonList = pokemonApiClient.getPokemonList(limit = limit, offset = offset)
+
+        pokemonList?.forEach {
+            pokemonDao.insert(PokemonEntity().domainToEntity(it))
+        }
+
+        return pokemonDao.queryAll().map { pokemonEntityList ->
+            pokemonEntityList.map { pokemonEntity ->
+                pokemonEntity.toDomain()
+            }
+        }
+    }
+
+    override fun getFavoritePokemonList(): Flow<List<Pokemon>> {
+        return pokemonDao.queryAllFavorites().map { pokemonEntityList ->
+            pokemonEntityList.map { pokemonEntity ->
+                pokemonEntity.toDomain()
+            }
+        }
+    }
+    override suspend fun addFavoritePokemon(pokemon: Pokemon?) {
+        favoriteDao.insertFavorite(
+            FavoriteEntity(
+                pokemonId = pokemon?.id ?: throw Exception("Pokemon is null"),
+            )
         )
-
-        return pokemon
     }
-    override suspend fun getPokemonList(limit: Long, offset: Long): List<Pokemon>? {
-        return pokemonApiClient.getPokemonList(limit = limit, offset = offset)
-    }
-
-    override fun getFavoritePokemonList(): List<Pokemon> {
-        return UserData.getFavoritePokemonList()
-    }
-
-    override fun addFavoritePokemon(pokemon: Pokemon?): Boolean {
-        return UserData.addFavoritePokemon(pokemon)
-    }
-    override fun removeFavoritePokemon(pokemon: Pokemon?): Boolean {
-        return UserData.removeFavoritePokemon(pokemon)
+    override suspend fun removeFavoritePokemon(pokemon: Pokemon?) {
+        favoriteDao.deleteFavorite(
+            pokemonId = pokemon?.id ?: throw Exception("Pokemon is null"),
+        )
     }
 }
