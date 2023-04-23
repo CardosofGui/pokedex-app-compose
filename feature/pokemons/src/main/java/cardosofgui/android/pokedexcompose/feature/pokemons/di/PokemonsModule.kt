@@ -7,7 +7,8 @@ import org.koin.dsl.module
 val pokemonsModule = module {
     viewModel {
         PokemonsViewModel(
-            getPokemonUseCase = get()
+            getPokemonUseCase = get(),
+            getUserUseCase = get()
         )
     }
 }

@@ -32,7 +32,7 @@ class UserRepositoryImpl(
         dataStore.updateData {
             it.copy(
                 name = userSettings.name,
-                filterType = FilterTypeProto.valueOf(it.filterType?.name ?: FilterType.NUMBER.name)
+                filterType = FilterTypeProto.valueOf(userSettings.filterType?.name ?: FilterType.NUMBER.name)
             )
         }
     }

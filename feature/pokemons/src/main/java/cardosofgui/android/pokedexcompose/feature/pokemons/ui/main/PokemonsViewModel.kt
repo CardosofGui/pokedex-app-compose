@@ -3,7 +3,10 @@ package cardosofgui.android.pokedexcompose.feature.pokemons.ui.main
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import cardosofgui.android.core.components.utils.ViewModel
+import cardosofgui.android.pokedexcompose.core.network.model.FilterType
+import cardosofgui.android.pokedexcompose.core.network.model.UserSettings
 import cardosofgui.android.pokedexcompose.core.usecase.GetPokemonUseCase
+import cardosofgui.android.pokedexcompose.core.usecase.GetUserUseCase
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsAction
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +14,8 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 class PokemonsViewModel(
-    private val getPokemonUseCase: GetPokemonUseCase
+    private val getPokemonUseCase: GetPokemonUseCase,
+    private val getUserUseCase: GetUserUseCase
 ): ViewModel<PokemonsState, PokemonsAction>(PokemonsState()) {
 
     var searchPokemon = MutableStateFlow("")
@@ -19,6 +23,21 @@ class PokemonsViewModel(
     init {
         collectSearchPokemon()
         getPokemonList()
+        collectUser()
+    }
+
+    private fun collectUser() {
+        viewModelScope.launch {
+            getUserUseCase().collect {
+                setState(
+                    state.value.copy(
+                        filterType = it?.filterType
+                    )
+                )
+
+                fetchPokemonListWithFilter()
+            }
+        }
     }
 
     private fun getPokemonList() {
@@ -35,8 +54,10 @@ class PokemonsViewModel(
                     offset = stateValues.offset * stateValues.limit
                 ).collect {
                     state.value = state.value.copy(
-                        pokemonList = it
+                        allPokemonList = it
                     )
+
+                    fetchPokemonListWithFilter()
                 }
             } catch (e: Exception) {
                 Log.e("PokemonsViewModel", e.message.orEmpty())
@@ -102,15 +123,53 @@ class PokemonsViewModel(
         }
     }
 
-    fun filterPokemonList() {
+    fun updateFilterType(
+        filterType: FilterType
+    ) {
         viewModelScope.launch {
-            val actualPokemonList = state.value.pokemonList
-
-            setState(
-                state.value.copy(
-                    pokemonList = actualPokemonList.filter { it.favoriteStatus }
+            getUserUseCase.updateUser(
+                UserSettings(
+                    filterType = filterType
                 )
             )
+        }
+    }
+
+    private fun fetchPokemonListWithFilter() {
+        val actualFilter = state.value.filterType
+
+        viewModelScope.launch {
+            when(actualFilter) {
+                FilterType.NUMBER -> {
+                    setState(
+                        state.value.copy(
+                            pokemonList = state.value.allPokemonList.sortedBy { pokemon ->
+                                pokemon.id
+                            }
+                        )
+                    )
+                }
+                FilterType.NAME -> {
+                    setState(
+                        state.value.copy(
+                            pokemonList = state.value.allPokemonList.sortedBy { pokemon ->
+                                pokemon.name
+                            }
+                        )
+                    )
+                }
+                FilterType.FAVORITE -> {
+                    setState(
+                        state.value.copy(
+                            pokemonList = state.value.allPokemonList.filter { pokemon ->
+                                pokemon.favoriteStatus
+                            }
+                        )
+                    )
+                }
+
+                else -> {}
+            }
         }
     }
 }

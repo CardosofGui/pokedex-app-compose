@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BottomSheetShip(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
+    backgroundColor: Color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.15f),
     height: Dp = 5.dp,
     width: Dp = 58.dp,
 ) {
