@@ -69,7 +69,7 @@ internal fun PokemonCard(
             Text(
                 text = "#${pokemon.id.toString().padStart(3, '0')}",
                 color = MaterialTheme.colorScheme.onSecondary,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 fontSize = 10.sp,
                 modifier = Modifier
                     .align(Alignment.TopEnd)

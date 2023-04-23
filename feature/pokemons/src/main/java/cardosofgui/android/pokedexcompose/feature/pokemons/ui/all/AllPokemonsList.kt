@@ -63,27 +63,6 @@ internal fun PokemonsActivity.AllPokemonsList(
         modifier = modifier
     ) {
         Column {
-            Row(
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
-            ) {
-                Text(
-                    text = "${pokemonList.size} Pokémon",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .weight(1f)
-                )
-
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.pokelist_icon),
-                    contentDescription = "Icon Pokemon",
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .size(24.dp)
-                )
-            }
-
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(112.dp),
                 contentPadding = PaddingValues(

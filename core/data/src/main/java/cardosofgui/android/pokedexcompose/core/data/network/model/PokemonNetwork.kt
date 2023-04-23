@@ -10,8 +10,7 @@ data class PokemonNetwork(
     val height: Long? = null,
     val weight: Long? = null,
     val types: List<TypesNetwork>? = null,
-    val stats: List<StatsNetwork>? = null,
-    val moves: List<MovesNetwork>? = null
+    val stats: List<StatsNetwork>? = null
 ) {
     fun provideToModel(): Pokemon {
         val urlSplit = url?.split("/") ?: emptyList()
@@ -25,8 +24,7 @@ data class PokemonNetwork(
             height = this.height,
             weight = this.weight,
             types = types?.map { it.provideToModel() },
-            stats = stats?.map { it.provideToModel() },
-            moves = moves?.map { it.provideToModel() } ?: emptyList()
+            stats = stats?.map { it.provideToModel() }
         )
     }
 }
