@@ -3,7 +3,9 @@ package cardosofgui.android.pokedexcompose.feature.pokemons.ui.main
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import cardosofgui.android.core.components.utils.ViewModel
+import cardosofgui.android.pokedexcompose.core.network.model.User
 import cardosofgui.android.pokedexcompose.core.usecase.GetPokemonUseCase
+import cardosofgui.android.pokedexcompose.core.usecase.GetUserUseCase
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonNavigation
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsAction
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsState

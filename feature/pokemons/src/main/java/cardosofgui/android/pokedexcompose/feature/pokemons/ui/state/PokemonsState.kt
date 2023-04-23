@@ -2,15 +2,12 @@ package cardosofgui.android.pokedexcompose.feature.pokemons.ui.state
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import cardosofgui.android.core.components.utils.UIState
 import cardosofgui.android.pokedexcompose.core.network.model.Pokemon
 import cardosofgui.android.pokedexcompose.feature.pokemons.R
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 data class PokemonsState(
     val isLoading: Boolean = true,

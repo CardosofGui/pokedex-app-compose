@@ -9,5 +9,6 @@ data class Pokemon(
     val weight: Long? = null,
     val types: List<Types>? = null,
     val stats: List<Stats>? = null,
-    val favoriteStatus: Boolean = false
+    val favoriteStatus: Boolean = false,
+    val moves: List<Moves> = emptyList()
 )
