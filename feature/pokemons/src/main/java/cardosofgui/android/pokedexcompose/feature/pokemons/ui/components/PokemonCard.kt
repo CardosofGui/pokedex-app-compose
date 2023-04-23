@@ -3,6 +3,7 @@ package cardosofgui.android.pokedexcompose.feature.pokemons.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,25 +54,27 @@ internal fun PokemonCard(
         ),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
+            defaultElevation = 6.dp
         ),
         modifier = modifier
             .fillMaxWidth()
             .height(128.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .paint(
-                    painter = painterResource(id = R.drawable.pokeicon),
-                    contentScale = ContentScale.Fit,
-                    alpha = if (isSystemInDarkTheme()) 0.3f else 0.05f
-                )
-                .padding(6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        var pokemonImage by remember(pokemon) { mutableStateOf(pokemon.mainImage) }
+
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            var pokemonImage by remember(pokemon) { mutableStateOf(pokemon.mainImage) }
+
+            Text(
+                text = "#${pokemon.id.toString().padStart(3, '0')}",
+                color = MaterialTheme.colorScheme.onSecondary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+            )
 
             SubcomposeAsyncImage(
                 model = pokemonImage,
@@ -84,21 +88,19 @@ internal fun PokemonCard(
                         pokemonImage = pokemon.secondaryImage
                     }
                 },
-                modifier = Modifier.size(72.dp)
+                modifier = Modifier
+                    .size(72.dp)
+                    .align(Alignment.Center)
             )
 
             Text(
                 text = pokemon.name?.capitalize(Locale.ROOT).orEmpty(),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp
-            )
-
-            Text(
-                text = "#${pokemon.id.toString().padStart(3, '0')}",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-                fontSize = 10.sp
+                color = Color.Black,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(8.dp)
             )
         }
     }

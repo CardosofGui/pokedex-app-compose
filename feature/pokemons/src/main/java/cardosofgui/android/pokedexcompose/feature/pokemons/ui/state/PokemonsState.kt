@@ -15,24 +15,6 @@ data class PokemonsState(
     val offset: Long = 0,
     val pokemonList: List<Pokemon> = emptyList(),
     val filterPokemonList: List<Pokemon> = emptyList(),
-    val favoritePokemonList: List<Pokemon> = emptyList(),
-    val filterFavoritePokemonList: List<Pokemon> = emptyList(),
     val searchLoading: Boolean = false,
-    val hasFilterPokemon: Boolean = false,
-    val navigation: PokemonNavigation = PokemonNavigation.AllPokemonList
+    val hasFilterPokemon: Boolean = false
 ): UIState
-
-sealed class PokemonNavigation {
-    object AllPokemonList: PokemonNavigation()
-    object FavoritesPokemonList: PokemonNavigation()
-}
-
-fun PokemonNavigation.getLabel() = when(this) {
-    PokemonNavigation.AllPokemonList -> "Pokémon"
-    PokemonNavigation.FavoritesPokemonList -> "Favoritos"
-}
-@Composable
-fun PokemonNavigation.getIcon() = when(this) {
-    PokemonNavigation.AllPokemonList -> ImageVector.vectorResource(id = R.drawable.pokelist_icon)
-    PokemonNavigation.FavoritesPokemonList -> Icons.Outlined.Favorite
-}

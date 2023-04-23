@@ -8,9 +8,12 @@ val primaryWhite = Color(0xFFEBEBEB)
 val onPrimaryWhite = Color(0xFFDCDCDC)
 
 // DarkTheme
-val backgroundDark = Color(0xFF0F0F0F)
-val primaryDark = Color(0xFF212121)
-val onPrimaryDark = Color(0xFF3C3C3C)
+val backgroundDark = Color(0xFFDC0A2D)
+val primaryDark = Color(0xFFFFFFFF)
+val onPrimaryDark = Color(0xFFFFFFFF)
+val secondary = Color(0xFFEFEFEF)
+val onSecondary = Color(0xFF666666)
+
 
 
 // Others

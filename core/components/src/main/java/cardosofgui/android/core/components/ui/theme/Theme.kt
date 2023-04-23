@@ -19,7 +19,9 @@ private val DarkColorScheme = darkColorScheme(
     background = backgroundDark,
     onBackground = white,
     primary = primaryDark,
-    onPrimary = onPrimaryDark
+    onPrimary = onPrimaryDark,
+    onSecondary = onSecondary,
+    secondary = secondary
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -36,7 +38,7 @@ fun PokemonTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if(darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = if(darkTheme) DarkColorScheme else DarkColorScheme
 
     val view = LocalView.current
     if (!view.isInEditMode) {
