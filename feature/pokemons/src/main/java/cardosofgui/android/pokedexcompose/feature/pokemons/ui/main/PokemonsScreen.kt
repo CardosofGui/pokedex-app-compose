@@ -105,7 +105,7 @@ internal fun PokemonsActivity.PokemonsScreen(
 
             FilterButton(
                 selectedFilter = FilterType.FAVORITE,
-                onClick = { },
+                onClick = { viewModel.filterPokemonList() },
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .clip(CircleShape)

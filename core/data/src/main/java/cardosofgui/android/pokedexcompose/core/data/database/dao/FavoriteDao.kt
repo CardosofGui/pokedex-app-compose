@@ -12,6 +12,6 @@ interface FavoriteDao {
     @Query("DELETE FROM favorite WHERE pokemonId = :pokemonId")
     suspend fun deleteFavorite(pokemonId: Long)
     @Query("SELECT * FROM favorite WHERE pokemonId = :pokemonId")
-    suspend fun queryFavorite(pokemonId: Long): FavoriteEntity?
+    suspend fun queryFavorite(pokemonId: Long?): FavoriteEntity?
 
 }

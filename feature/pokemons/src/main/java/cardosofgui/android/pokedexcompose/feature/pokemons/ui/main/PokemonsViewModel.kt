@@ -101,4 +101,16 @@ class PokemonsViewModel(
             searchPokemon.value = pokemonName
         }
     }
+
+    fun filterPokemonList() {
+        viewModelScope.launch {
+            val actualPokemonList = state.value.pokemonList
+
+            setState(
+                state.value.copy(
+                    pokemonList = actualPokemonList.filter { it.favoriteStatus }
+                )
+            )
+        }
+    }
 }

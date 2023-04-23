@@ -1,9 +1,9 @@
 package cardosofgui.android.pokedexcompose.core.repository
 
-import cardosofgui.android.pokedexcompose.core.network.model.User
+import cardosofgui.android.pokedexcompose.core.network.model.UserSettings
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    suspend fun getUser(): Flow<User?>
-    suspend fun updateUser(user: User)
+    suspend fun getUser(): Flow<UserSettings?>
+    suspend fun updateUser(userSettings: UserSettings)
 }

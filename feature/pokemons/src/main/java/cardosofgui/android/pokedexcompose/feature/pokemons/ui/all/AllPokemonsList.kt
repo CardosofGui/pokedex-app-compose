@@ -6,6 +6,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -56,68 +57,72 @@ internal fun PokemonsActivity.AllPokemonsList(
             else state.pokemonList
         }
 
-    AnimatedVisibility(
-        visible = searchLoading.not(),
-        enter = slideInHorizontally(),
-        exit = slideOutHorizontally() + shrinkHorizontally(),
-        modifier = modifier
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.onBackground)
+            .fillMaxSize()
     ) {
-        Column {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(112.dp),
-                contentPadding = PaddingValues(
-                    top = 8.dp,
-                    start = 8.dp,
-                    end = 8.dp,
-                    bottom = 8.dp
-                ),
-                content = {
-                    itemsIndexed(pokemonList) { index, pokemon ->
-                        PokemonCard(
-                            pokemon = pokemon,
-                            modifier = Modifier.padding(
-                                4.dp
-                            ),
-                            onClickPokemon = { viewModel.clickedPokemon(it) }
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .padding(4.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.onBackground)
-            )
-        }
-    }
-
-
-    AnimatedVisibility(
-        visible = searchLoading,
-        enter = slideInHorizontally(),
-        exit = slideOutHorizontally() + shrinkHorizontally(),
-        modifier = modifier
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
+        AnimatedVisibility(
+            visible = searchLoading.not(),
+            enter = slideInHorizontally(),
+            exit = slideOutHorizontally() + shrinkHorizontally(),
+            modifier = modifier
         ) {
-            LottieAnim(
-                R.raw.loading_pokeball,
-                modifier = Modifier
-                    .size(200.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
+            Column {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(112.dp),
+                    contentPadding = PaddingValues(
+                        top = 8.dp,
+                        start = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp
+                    ),
+                    content = {
+                        itemsIndexed(pokemonList) { index, pokemon ->
+                            PokemonCard(
+                                pokemon = pokemon,
+                                modifier = Modifier.padding(
+                                    4.dp
+                                ),
+                                onClickPokemon = { viewModel.clickedPokemon(it) }
+                            )
+                        }
+                    }
+                )
+            }
+        }
 
-            Text(
-                text = "Buscando...",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
+
+        AnimatedVisibility(
+            visible = searchLoading,
+            enter = slideInHorizontally(),
+            exit = slideOutHorizontally() + shrinkHorizontally(),
+            modifier = modifier
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(8.dp)
-            )
+                    .fillMaxSize()
+            ) {
+                LottieAnim(
+                    R.raw.loading_pokeball,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                Text(
+                    text = "Buscando...",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(8.dp)
+                )
+            }
         }
     }
 }

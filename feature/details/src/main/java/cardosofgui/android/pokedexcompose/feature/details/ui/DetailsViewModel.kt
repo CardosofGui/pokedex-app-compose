@@ -73,7 +73,7 @@ class DetailsViewModel(
                     )
                 )
             } catch (e: Exception) {
-                // Todo DEU RUIM
+                e.printStackTrace()
             }
         }
     }

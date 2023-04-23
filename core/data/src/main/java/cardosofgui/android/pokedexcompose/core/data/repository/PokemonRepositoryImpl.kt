@@ -1,5 +1,6 @@
 package cardosofgui.android.pokedexcompose.core.data.repository
 
+import android.util.Log
 import cardosofgui.android.pokedexcompose.core.data.database.dao.FavoriteDao
 import cardosofgui.android.pokedexcompose.core.data.database.dao.PokemonDao
 import cardosofgui.android.pokedexcompose.core.data.database.dao.StatsDao
@@ -7,9 +8,13 @@ import cardosofgui.android.pokedexcompose.core.data.database.entity.FavoriteEnti
 import cardosofgui.android.pokedexcompose.core.data.database.entity.PokemonEntity
 import cardosofgui.android.pokedexcompose.core.data.database.entity.StatsEntity
 import cardosofgui.android.pokedexcompose.core.network.model.Pokemon
+import cardosofgui.android.pokedexcompose.core.network.model.UserSettings
 import cardosofgui.android.pokedexcompose.core.network.service.PokemonApiClient
 import cardosofgui.android.pokedexcompose.core.repository.PokemonRepository
+import cardosofgui.android.pokedexcompose.core.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class PokemonRepositoryImpl(
@@ -38,7 +43,9 @@ class PokemonRepositoryImpl(
     override suspend fun getPokemonList(): Flow<List<Pokemon>> {
         return pokemonDao.queryAll().map { pokemonEntityList ->
             pokemonEntityList.map { pokemonEntity ->
-                pokemonEntity.toDomain()
+                pokemonEntity.toDomain().copy(
+                    favoriteStatus = favoriteDao.queryFavorite(pokemonEntity.toDomain().id) != null
+                )
             }
         }
     }
