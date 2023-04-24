@@ -1,5 +1,6 @@
 package cardosofgui.android.pokedexcompose.feature.details.ui
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import cardosofgui.android.core.components.utils.ViewModel
 import cardosofgui.android.pokedexcompose.core.usecase.FavoritePokemonUseCase
@@ -13,7 +14,7 @@ import java.util.Locale
 class DetailsViewModel(
     private val getPokemonUseCase: GetPokemonUseCase,
     private val favoritePokemonUseCase: FavoritePokemonUseCase,
-    val pokemonId: Long
+    var pokemonId: Long
 ): ViewModel<DetailsState, DetailsAction>(DetailsState()) {
     init {
         getPokemonDetails()
@@ -28,13 +29,13 @@ class DetailsViewModel(
             )
 
             try {
-                val response = getPokemonUseCase.getPokemonById(pokemonId)
-
-                setState(
-                    state.value.copy(
-                        pokemonDetails = response.first()
+                getPokemonUseCase.getPokemonById(pokemonId).collect {
+                    setState(
+                        state.value.copy(
+                            pokemonDetails = it
+                        )
                     )
-                )
+                }
             } catch (e: Exception) {
                 // TODO DEU RUIM
             } finally {

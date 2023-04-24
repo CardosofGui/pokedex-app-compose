@@ -1,5 +1,6 @@
 package cardosofgui.android.pokedexcompose.feature.details.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -12,10 +13,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
@@ -32,27 +36,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cardosofgui.android.core.components.R
 import cardosofgui.android.core.components.ui.BackButton
-import cardosofgui.android.core.components.ui.BottomSheetShip
 import cardosofgui.android.core.components.ui.LottieAnim
 import cardosofgui.android.core.components.utils.Extensions.Companion.getBackgroundColor
 import cardosofgui.android.pokedexcompose.core.network.model.Stats
 import cardosofgui.android.pokedexcompose.core.network.model.Types
+import cardosofgui.android.pokedexcompose.feature.details.R
 import coil.compose.SubcomposeAsyncImage
 import java.util.Locale
 
@@ -68,125 +78,171 @@ internal fun DetailsMainActivity.DetailsScreen(
     val pokemonId = pokemonDetails?.id
     val name = pokemonDetails?.name
     val favoriteStatus = pokemonDetails?.favoriteStatus ?: false
+    val mainTypeColor = pokemonDetails?.types?.first()?.type?.name.getBackgroundColor()
+
+    window.statusBarColor = mainTypeColor.toArgb()
 
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(mainTypeColor)
+            .fillMaxSize()
             .paint(
-                painter = painterResource(id = R.drawable.pokeicon),
-                contentScale = ContentScale.FillHeight,
-                alpha = if (isSystemInDarkTheme()) 0.07f else 0.04f,
-                alignment = Alignment.TopCenter
+                painter = painterResource(id = R.drawable.pokeball),
+                contentScale = ContentScale.Fit,
+                alpha = if (isSystemInDarkTheme()) 0.15f else 0.15f,
+                alignment = TopEnd
             )
     ) {
         Box {
-            BackButton(
-                onClickBack = { finish() },
-                modifier = Modifier.padding(6.dp)
-            )
-        }
-
-        SubcomposeAsyncImage(
-            model = pokemonDetails?.mainImage,
-            contentDescription = "",
-            contentScale = ContentScale.Fit,
-            loading = {
-                LottieAnim(rawRes = R.raw.pokemon_loading)
-            },
-            modifier = Modifier
-                .size(252.dp)
-                .align(CenterHorizontally)
-                .weight(1f)
-                .fillMaxWidth()
-        )
-
-        Box {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(topEnd = 24.dp, topStart = 24.dp))
-                    .background(MaterialTheme.colorScheme.primary)
-                    .padding(bottom = 12.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                BottomSheetShip(
-                    modifier = Modifier
-                        .align(CenterHorizontally)
-                        .padding(vertical = 6.dp)
+                BackButton(
+                    onClickBack = { finish() },
+                    modifier = Modifier.padding(6.dp)
                 )
 
                 Text(
-                    text = (name ?: "Carregando...").capitalize(Locale.ROOT),
+                    text = pokemonDetails?.name?.capitalize(Locale.ROOT).orEmpty(),
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.weight(1f)
                 )
-
+                
                 Text(
                     text = if(pokemonId != null) "#${pokemonDetails.id.toString().padStart(3, '0')}" else "Carregando...",
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground.copy(.6f),
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
-                    modifier = Modifier.fillMaxWidth()
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(end = 18.dp)
                 )
+            }
+        }
 
-                Row(
+        Box(modifier = Modifier.fillMaxSize()) {
+            SubcomposeAsyncImage(
+                model = pokemonDetails?.mainImage,
+                contentDescription = "",
+                contentScale = ContentScale.Fit,
+                loading = {
+                    LottieAnim(rawRes = cardosofgui.android.core.components.R.raw.pokemon_loading)
+                },
+                modifier = Modifier
+                    .size(284.dp)
+                    .align(TopCenter)
+                    .zIndex(1f)
+            )
+
+
+            Box(
+                modifier = Modifier
+                    .align(BottomCenter)
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.68f)
+                    .padding(4.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White)
+            ) {
+                Crossfade(
+                    targetState = favoriteStatus,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .align(TopEnd)
+
                 ) {
-                    pokemonDetails?.types?.forEach { type ->
-                        TypeShip(
-                            type = type,
+                    when(it) {
+                        true -> FavoriteIcon(
+                            favoriteStatus = true,
+                            onClickFavorite = { viewModel.favoritePokemon(false) },
                             modifier = Modifier
-                                .padding(horizontal = 6.dp)
+                                .padding(18.dp)
+                                .size(32.dp)
+                        )
+                        false -> FavoriteIcon(
+                            favoriteStatus = false,
+                            onClickFavorite = { viewModel.favoritePokemon(true) },
+                            modifier = Modifier
+                                .padding(18.dp)
+                                .size(32.dp)
                         )
                     }
                 }
 
-                AnimatedVisibility(
-                    visible = !state.isLoading,
+                Column(
+                    modifier = Modifier
+                        .padding(top = 64.dp)
                 ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        pokemonDetails?.types?.forEach { type ->
+                            TypeShip(
+                                type = type,
+                                modifier = Modifier
+                                    .padding(horizontal = 6.dp)
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = "Sobre",
+                        fontSize = 24.sp,
+                        color = mainTypeColor,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(CenterHorizontally)
+                            .padding(top = 12.dp)
+                    )
+
+                    Row {
+                        AboutItem(
+                            label = "Altura",
+                            value = "${pokemonDetails?.height ?: 0.0} m",
+                            icon = ImageVector.vectorResource(id = R.drawable.height),
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .weight(1f)
+                        )
+
+                        AboutItem(
+                            label = "Peso",
+                            value = "${pokemonDetails?.weight ?: 0.0} kg",
+                            icon = ImageVector.vectorResource(id = R.drawable.weight),
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .weight(1f)
+                        )
+                    }
+
+                    Text(
+                        text = "Status Base",
+                        fontSize = 24.sp,
+                        color = mainTypeColor,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(CenterHorizontally)
+                            .padding(vertical = 12.dp)
+                    )
+
+
                     Column {
                         pokemonDetails?.stats?.forEach { stat ->
                             StatLineWithLabel(
                                 stat = stat,
+                                color = mainTypeColor,
                                 modifier = Modifier.padding(horizontal = 12.dp)
                             )
                         }
                     }
                 }
             }
-
-            Crossfade(
-                targetState = favoriteStatus,
-                modifier = Modifier
-                    .align(TopEnd)
-            ) {
-                when(it) {
-                    true -> FavoriteIcon(
-                        favoriteStatus = true,
-                        onClickFavorite = { viewModel.favoritePokemon(false) },
-                        modifier = Modifier
-                            .padding(top = 24.dp, end = 12.dp)
-                            .size(32.dp)
-                    )
-                    false -> FavoriteIcon(
-                        favoriteStatus = false,
-                        onClickFavorite = { viewModel.favoritePokemon(true) },
-                        modifier = Modifier
-                            .padding(top = 24.dp, end = 12.dp)
-                            .size(32.dp)
-                    )
-                }
-            }
         }
     }
-    
+
+
     LaunchedEffect(Unit) {
         viewModel.action.collect(::handleActions)
     }
@@ -210,6 +266,45 @@ private fun FavoriteIcon(
     }
 }
 
+@Composable
+private fun AboutItem(
+    label: String,
+    value: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = "$label icon",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(16.dp)
+                    .padding(end = 4.dp)
+            )
+
+            Text(
+                text = value,
+                fontSize = 14.sp,
+                color = Color.Black
+            )
+        }
+
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            modifier = Modifier
+                .align(CenterHorizontally)
+        )
+    }
+}
+
 fun Stats?.calculateProgress(): Float {
     if(this == null) return 0f
     val baseStat = this.baseStat?.toFloat() ?: return 0f
@@ -220,7 +315,8 @@ fun Stats?.calculateProgress(): Float {
 @Composable
 fun StatLineWithLabel(
     stat: Stats,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary
 ) {
     val name = stat.stat?.name.orEmpty().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
     val baseStat = stat.baseStat.toString()
@@ -233,22 +329,25 @@ fun StatLineWithLabel(
             text = name,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
+            color = color
         )
 
         StatLinearProgress(
             baseStatFloat = stat.calculateProgress(),
+            color = color,
             modifier = Modifier
-                .height(10.dp)
+                .padding(vertical = 6.dp)
+                .height(14.dp)
                 .weight(1f)
                 .padding(horizontal = 6.dp)
+                .clip(CircleShape)
         )
 
         Text(
-            text = baseStat,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            text = baseStat.padStart(3, '0'),
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+            color = Color.Black
         )
     }
 }
@@ -256,7 +355,8 @@ fun StatLineWithLabel(
 @Composable
 fun StatLinearProgress(
     baseStatFloat: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color,
 ) {
     var progress by remember { mutableStateOf(0f) }
     val progressAnimDuration = 1500
@@ -267,8 +367,8 @@ fun StatLinearProgress(
 
     LinearProgressIndicator(
         progress = progressAnimation,
-        color = MaterialTheme.colorScheme.onPrimary,
-        trackColor = MaterialTheme.colorScheme.background,
+        color = color,
+        trackColor = color.copy(.4f),
         modifier = modifier
             .fillMaxWidth()
     )
@@ -284,11 +384,11 @@ fun TypeShip(
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = type.type.name?.name.orEmpty(),
+        text = type.type.name?.name?.capitalize(Locale.ROOT).orEmpty(),
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
-            .clip(RoundedCornerShape(6.dp))
+            .clip(RoundedCornerShape(40.dp))
             .background(type.type.name.getBackgroundColor())
             .padding(horizontal = 12.dp, vertical = 4.dp)
     )

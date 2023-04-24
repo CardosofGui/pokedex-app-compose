@@ -51,6 +51,7 @@ import kotlinx.coroutines.launch
 internal fun PokemonsActivity.PokemonsScreen(
     modifier: Modifier = Modifier
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
     )
@@ -121,7 +122,7 @@ internal fun PokemonsActivity.PokemonsScreen(
                 )
 
                 FilterButton(
-                    selectedFilter = FilterType.FAVORITE,
+                    selectedFilter = state.filterType ?: FilterType.NUMBER,
                     onClick = {
                         scope.launch {
                             sheetState.show()
@@ -157,7 +158,7 @@ fun FilterButton(
                 imageVector = selectedFilter.getIcon(),
                 contentDescription = "Filter icon",
                 tint = MaterialTheme.colorScheme.background,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(18.dp)
             )
         }
     }
