@@ -47,7 +47,7 @@ class GetPokemonUseCase(
         return pokemonList
     }
 
-    private suspend fun refreshPokemonList(limit: Long, offset: Long) {
+    suspend fun refreshPokemonList(limit: Long, offset: Long) {
         pokemonRepository.getPokemonListFromNetwork(limit = limit, offset = offset)
     }
 }

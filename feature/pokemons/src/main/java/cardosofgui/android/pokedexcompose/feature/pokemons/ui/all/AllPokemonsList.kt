@@ -94,7 +94,6 @@ internal fun PokemonsActivity.AllPokemonsList(
             }
         }
 
-
         AnimatedVisibility(
             visible = searchLoading,
             enter = slideInHorizontally(),

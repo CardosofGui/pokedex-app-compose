@@ -29,10 +29,13 @@ class UserRepositoryImpl(
     }
 
     override suspend fun updateUser(userSettings: UserSettings) {
+        val currentUser = getUser().first()
+        val filterTypeDefault = FilterType.NUMBER.name
+
         dataStore.updateData {
             it.copy(
-                name = userSettings.name,
-                filterType = FilterTypeProto.valueOf(userSettings.filterType?.name ?: FilterType.NUMBER.name)
+                name = if(userSettings.name.orEmpty().isNotEmpty()) userSettings.name else currentUser?.name,
+                filterType = FilterTypeProto.valueOf(if(userSettings.filterType != null) userSettings.filterType?.name ?: filterTypeDefault else currentUser?.filterType?.name ?: filterTypeDefault)
             )
         }
     }

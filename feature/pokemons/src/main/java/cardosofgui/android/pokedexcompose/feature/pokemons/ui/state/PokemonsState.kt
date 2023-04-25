@@ -13,5 +13,6 @@ data class PokemonsState(
     val filterPokemonList: List<Pokemon> = emptyList(),
     val searchLoading: Boolean = false,
     val filterType: FilterType? = FilterType.NUMBER,
+    val username: String = "",
     val hasFilterPokemon: Boolean = false
 ): UIState

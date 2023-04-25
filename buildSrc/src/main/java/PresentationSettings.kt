@@ -1,4 +1,5 @@
 object PresentationVersions {
+    const val compose = "1.2.0-beta02"
     const val composeCompiler = "1.3.2"
     const val composeBom = "2022.10.00"
     const val composeActivity = "1.6.1"
@@ -13,6 +14,7 @@ object PresentationLibs {
     const val composeGraphics = "androidx.compose.ui:ui-graphics"
     const val composePreview = "androidx.compose.ui:ui-tooling-preview"
     const val composeMaterial3 = "androidx.compose.material3:material3"
+    const val composeMaterial = "androidx.compose.material:material:${PresentationVersions.compose}"
     const val composeCoil = "io.coil-kt:coil-compose:${PresentationVersions.composeCoil}"
 
     const val lottie = "com.airbnb.android:lottie:${PresentationVersions.lottie}"

@@ -101,6 +101,15 @@ internal fun PokemonsActivity.PokemonsScreen(
                 )
             }
 
+            Text(
+                text = "Bem vindo de volta, treinador ${state.username}!",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
+
             Row(
                 Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically

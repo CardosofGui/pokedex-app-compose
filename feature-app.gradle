@@ -45,8 +45,9 @@ dependencies {
     implementation(PresentationLibs.composeCoil)
     implementation(CoreLibs.lifecycleRuntimeCompose)
 
-    implementation "androidx.compose.ui:ui:1.2.0-beta02"
-    implementation "androidx.compose.material:material:1.2.0-beta02"
+    // Compose UI
+    implementation PresentationLibs.composeUi
+    implementation PresentationLibs.composeMaterial
 
     //Injection
     implementation(CoreLibs.koinCompose)

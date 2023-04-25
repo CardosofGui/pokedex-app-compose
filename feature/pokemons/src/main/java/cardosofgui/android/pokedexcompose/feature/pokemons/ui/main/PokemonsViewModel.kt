@@ -9,6 +9,7 @@ import cardosofgui.android.pokedexcompose.core.usecase.GetPokemonUseCase
 import cardosofgui.android.pokedexcompose.core.usecase.GetUserUseCase
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsAction
 import cardosofgui.android.pokedexcompose.feature.pokemons.ui.state.PokemonsState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
@@ -21,8 +22,8 @@ class PokemonsViewModel(
     var searchPokemon = MutableStateFlow("")
 
     init {
-        collectSearchPokemon()
         getPokemonList()
+        collectSearchPokemon()
         collectUser()
     }
 
@@ -31,7 +32,8 @@ class PokemonsViewModel(
             getUserUseCase().collect {
                 setState(
                     state.value.copy(
-                        filterType = it?.filterType
+                        filterType = it?.filterType,
+                        username = it?.name.orEmpty()
                     )
                 )
 
@@ -46,25 +48,17 @@ class PokemonsViewModel(
                 isLoading = true
             )
 
-            try {
-                val stateValues = state.value
+            val stateValues = state.value
 
-                getPokemonUseCase.getPokemonList(
-                    limit = stateValues.limit,
-                    offset = stateValues.offset * stateValues.limit
-                ).collect {
-                    state.value = state.value.copy(
-                        allPokemonList = it
-                    )
-
-                    fetchPokemonListWithFilter()
-                }
-            } catch (e: Exception) {
-                Log.e("PokemonsViewModel", e.message.orEmpty())
-            } finally {
+            getPokemonUseCase.getPokemonList(
+                limit = stateValues.limit,
+                offset = stateValues.offset * stateValues.limit
+            ).collect {
                 state.value = state.value.copy(
-                    isLoading = false
+                    allPokemonList = it
                 )
+
+                fetchPokemonListWithFilter()
             }
         }
     }
@@ -127,6 +121,8 @@ class PokemonsViewModel(
         filterType: FilterType
     ) {
         viewModelScope.launch {
+            refreshPokemonList()
+
             getUserUseCase.updateUser(
                 UserSettings(
                     filterType = filterType
@@ -170,6 +166,15 @@ class PokemonsViewModel(
 
                 else -> {}
             }
+        }
+    }
+
+    private fun refreshPokemonList() {
+        viewModelScope.launch {
+            getPokemonUseCase.refreshPokemonList(
+                limit = state.value.limit,
+                offset = state.value.offset * state.value.limit
+            )
         }
     }
 }
