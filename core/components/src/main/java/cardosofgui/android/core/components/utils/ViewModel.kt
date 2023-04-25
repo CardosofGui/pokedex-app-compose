@@ -34,5 +34,7 @@ abstract class ViewModel<State: UIState, Action: UIAction>(
     }
 }
 
+
+
 interface UIState
 interface UIAction
